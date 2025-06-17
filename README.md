@@ -9,6 +9,86 @@ StockView is a concept for the finance sector in the form of a stock and market 
 - User-friendly interface for exploring financial trends
 - Extensible for new data sources and visualization types
 
+- TICKERS = {
+    # Technology
+    'AAPL': 'Technology',
+    'MSFT': 'Technology',
+    'GOOGL': 'Communication Services',
+    'META': 'Communication Services',
+    'NVDA': 'Technology',
+    'ADBE': 'Technology',
+    'ORCL': 'Technology',
+    'CSCO': 'Technology',
+    'IBM': 'Technology',
+    'CRM': 'Technology',
+
+    # Consumer Discretionary
+    'AMZN': 'Consumer Discretionary',
+    'TSLA': 'Consumer Discretionary',
+    'HD': 'Consumer Discretionary',
+    'MCD': 'Consumer Discretionary',
+    'NKE': 'Consumer Discretionary',
+    'SBUX': 'Consumer Discretionary',
+
+    # Financials
+    'JPM': 'Financials',
+    'BAC': 'Financials',
+    'WFC': 'Financials',
+    'C': 'Financials',
+    'GS': 'Financials',
+    'MS': 'Financials',
+    'AXP': 'Financials',
+
+    # Healthcare
+    'JNJ': 'Healthcare',
+    'PFE': 'Healthcare',
+    'MRK': 'Healthcare',
+    'ABBV': 'Healthcare',
+    'TMO': 'Healthcare',
+    'LLY': 'Healthcare',
+    'UNH': 'Healthcare',
+
+    # Industrials
+    'UNP': 'Industrials',
+    'HON': 'Industrials',
+    'UPS': 'Industrials',
+    'CAT': 'Industrials',
+    'BA': 'Industrials',
+
+    # Energy
+    'XOM': 'Energy',
+    'CVX': 'Energy',
+    'COP': 'Energy',
+    'SLB': 'Energy',
+
+    # Utilities
+    'NEE': 'Utilities',
+    'DUK': 'Utilities',
+    'SO': 'Utilities',
+
+    # Consumer Staples
+    'PG': 'Consumer Staples',
+    'KO': 'Consumer Staples',
+    'PEP': 'Consumer Staples',
+    'WMT': 'Consumer Staples',
+    'COST': 'Consumer Staples',
+
+    # Real Estate
+    'PLD': 'Real Estate',
+    'AMT': 'Real Estate',
+    'CCI': 'Real Estate',
+
+    # Materials
+    'LIN': 'Materials',
+    'APD': 'Materials',
+    'SHW': 'Materials',
+
+    # Telecommunication Services
+    'VZ': 'Communication Services',
+    'T': 'Communication Services',
+    'TMUS': 'Communication Services',
+}
+
 ## Installation
 
 1. Clone the repository:
