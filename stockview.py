@@ -84,14 +84,28 @@ TICKERS = {
 }
 
 def get_returns(ticker, period):
-    """Fetch and calculate percent return for a ticker over a given period."""
-    data = yf.download(ticker, period=period, interval='1d', progress=False)
-    if data.empty:
+    """
+    Fetch and calculate percent return for a ticker over a given period.
+    Handles empty data and missing columns robustly.
+    """
+    try:
+        data = yf.download(
+            ticker,
+            period=period,
+            interval='1d',
+            progress=False,
+            auto_adjust=False  # Explicit to avoid FutureWarning
+        )
+        if data.empty or 'Open' not in data.columns or 'Close' not in data.columns:
+            print(f"Warning: No valid data for {ticker} in period '{period}'.")
+            return None
+        start_price = data['Open'].iloc[0]
+        end_price = data['Close'].iloc[-1]
+        pct_return = (end_price - start_price) / start_price * 100
+        return pct_return
+    except Exception as e:
+        print(f"Error fetching data for {ticker}: {e}")
         return None
-    start_price = data['Open'][0]
-    end_price = data['Close'][-1]
-    pct_return = (end_price - start_price) / start_price * 100
-    return pct_return
 
 def get_all_returns(tickers, period):
     """Get returns for all tickers."""
@@ -104,6 +118,9 @@ def get_all_returns(tickers, period):
 
 def show_winners_losers(df, top_n=3):
     """Print top winners and losers."""
+    if df.empty:
+        print("No data to display winners and losers.")
+        return
     winners = df.sort_values('Return', ascending=False).head(top_n)
     losers = df.sort_values('Return').head(top_n)
     print("Top Winners:")
@@ -117,6 +134,9 @@ def filter_by_sector(df, sector):
 
 def plot_returns(df, title='Stock Returns'):
     """Plot bar chart of returns by ticker and sector."""
+    if df.empty:
+        print("No data to plot.")
+        return
     fig = px.bar(df, x='Ticker', y='Return', color='Sector', title=title)
     fig.show()
 
