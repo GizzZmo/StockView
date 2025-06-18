@@ -31,7 +31,7 @@ StockView is a concept for the finance sector in the form of a stock and market 
 
 1. Run the main application:
    ```bash
-   python main.py
+   python stockview.py
    ```
 2. Open your browser and navigate to the provided local address, if applicable.
 
