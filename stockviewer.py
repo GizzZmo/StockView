@@ -148,13 +148,14 @@ def get_stock_data(symbol, api_key):
         # FIX: Added verify=False to bypass SSL verification errors in some local environments.
         # WARNING: This disables security checks and should not be used in a production application.
         r_price = requests.get(price_url, verify=False)
-        r_price.raise_for_status()
+        r_price.raise_for_status() # Raise an exception for bad status codes (4xx or 5xx)
         price_data = r_price.json()
         
-        if "Note" in price_data:
-            return None, None, f"API limit reached or other API note: {price_data['Note']}"
-        if "Error Message" in price_data:
-            return None, None, f"Invalid symbol or API error: {price_data['Error Message']}"
+        # FIX: Check for the main data key's existence before trying to access it.
+        # This provides a more specific error if the API response is unusual (e.g., due to a bad key or API limits).
+        if 'Time Series (Daily)' not in price_data:
+            error_detail = price_data.get("Note") or price_data.get("Error Message") or str(price_data)
+            return None, None, f"Alpha Vantage did not return valid price data for '{symbol}'. API response: {error_detail}"
             
         df = pd.DataFrame.from_dict(price_data['Time Series (Daily)'], orient='index')
         df = df.astype(float)
@@ -164,21 +165,22 @@ def get_stock_data(symbol, api_key):
         
     except requests.exceptions.RequestException as e:
         return None, None, f"Network error fetching price data: {e}"
-    except (KeyError, TypeError):
-        return None, None, f"Could not parse price data for '{symbol}'. It may be an invalid ticker."
+    except Exception as e:
+        # Catch any other unexpected errors during data processing.
+        return None, None, f"An unexpected error occurred while parsing price data for '{symbol}': {e}"
 
     # 2. Fetch Fundamental Data
     overview_url = f'https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={api_key}'
     try:
-        # FIX: Added verify=False to bypass SSL verification errors in some local environments.
+        # FIX: Added verify=False to bypass SSL verification errors.
         r_overview = requests.get(overview_url, verify=False)
         r_overview.raise_for_status()
         overview_data = r_overview.json()
-        if "Note" in overview_data:
-            return df, {}, f"API limit reached on fundamentals: {overview_data['Note']}"
         if not overview_data or overview_data.get('Symbol') is None:
-             return df, {}, "Could not fetch fundamental data (the symbol might be an ETF or Index, which lacks this data)."
-
+             # Handle cases where fundamentals don't exist (e.g., ETFs) or API limit hit.
+             note = overview_data.get("Note", "Fundamental data not available for this symbol (it may be an ETF/Index).")
+             return df, {}, note
+    
     except requests.exceptions.RequestException as e:
         return df, {}, f"Network error fetching overview data: {e}"
 
